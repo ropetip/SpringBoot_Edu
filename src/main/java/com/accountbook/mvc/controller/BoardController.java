@@ -3,6 +3,7 @@ package com.accountbook.mvc.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,7 +11,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.accountbook.config.exception.BaseException;
 import com.accountbook.config.http.BaseResponse;
+import com.accountbook.config.http.BaseResponseCode;
 import com.accountbook.mvc.dao.Board;
 import com.accountbook.mvc.parameter.BoardParameter;
 import com.accountbook.mvc.service.BoardService;
@@ -40,17 +43,37 @@ public class BoardController {
 		@ApiImplicitParam(name = "boardSeq", value="게시물 번호", example = "1")
 	})
 	public BaseResponse<Board> get(@PathVariable int boardSeq) {
+		Board board = boardService.get(boardSeq);
+		// null 처리
+		if(board == null) {
+			throw new BaseException(BaseResponseCode.DATA_IS_NULL, new String[] { "게시물"} );
+		}
 		return new BaseResponse<Board>(boardService.get(boardSeq));
 	}
 	
 	@PutMapping
 	@ApiOperation(value="등록/수정 처리", notes=" 신규 게시물 저장 및 기존 게시물 업데이트가 가능합니다.")	
 	@ApiImplicitParams({
-		@ApiImplicitParam(name = "boardSeq", value="게시물 번호", example = "1"),
 		@ApiImplicitParam(name = "title", value="제목", example = "spring"),
 		@ApiImplicitParam(name = "contents", value="내용", example = "spring 강좌"),
 	})
 	public BaseResponse<Integer> save(BoardParameter param) {
+		int boardSeq = param.getBoardSeq();
+		// 제목 필수 체크
+		if(StringUtils.isEmpty(param.getTitle()) ) {
+			throw new BaseException(BaseResponseCode.VALIDATE_REQUIRED, new String[] { "title", "제목"} );
+		}
+		// 내용 필수 체크
+		if(StringUtils.isEmpty(param.getContents()) ) {
+			throw new BaseException(BaseResponseCode.VALIDATE_REQUIRED, new String[] { "contents", "내용" } );
+		}
+		// boardSeq가 있는 경우 체크
+		if(boardSeq != 0) {
+			Board board =boardService.get(boardSeq);
+			if(board == null) {
+				throw new BaseException(BaseResponseCode.DATA_IS_NULL, new String[] { "boardSeq"} );
+			}
+		}
 		boardService.save(param);
 		return new BaseResponse<Integer>(param.getBoardSeq()); 
 	}
