@@ -1,10 +1,11 @@
 package com.accountbook.mvc.repository;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
-import com.accountbook.mvc.dao.Board;
+import com.accountbook.mvc.domain.Board;
 import com.accountbook.mvc.parameter.BoardParameter;
 
 /**
@@ -24,4 +25,7 @@ public interface BoardRepository {
 	void update(BoardParameter board);
 	
 	void delete(int boardSeq);
+	
+	void saveList(Map<String, Object> paramMap);
+
 }

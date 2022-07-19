@@ -2,8 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.accountbook.mvc.repository.BoardRepository">
-	<select id="getList" parameterType="com.accountbook.mvc.dao.Board" resultType="com.accountbook.mvc.dao.Board">
+	<select id="getList" parameterType="com.accountbook.mvc.domain.Board" resultType="com.accountbook.mvc.domain.Board">
 		SELECT B.BOARD_SEQ
+ 				 , B.BOARD_TYPE
 		         , B.TITLE
 		         , B.CONTENTS
 		         , B.REG_DATE
@@ -11,8 +12,9 @@
 		 ORDER BY B.REG_DATE DESC
 	</select>
 	
-	<select id="get" parameterType="com.accountbook.mvc.dao.Board" resultType="com.accountbook.mvc.dao.Board">
+	<select id="get" parameterType="com.accountbook.mvc.domain.Board" resultType="com.accountbook.mvc.domain.Board">
 		SELECT B.BOARD_SEQ
+			  	 , B.BOARD_TYPE
 		         , B.TITLE
 		         , B.CONTENTS
 		         , B.REG_DATE
@@ -24,28 +26,47 @@
 	<insert id="insert" parameterType="com.accountbook.mvc.parameter.BoardParameter" useGeneratedKeys="true" keyProperty="boardSeq">
 		INSERT INTO T_BOARD
 		(
-			TITLE
+			BOARD_TYPE
+			,TITLE
 			,CONTENTS
 			,REG_DATE 
 		)
 		VALUES(
-			#{title}
+			 #{boardType}
+			,#{title}
 			,#{contents}
 			,sysdate()
 		)
 	</insert>
 	
-	<update id="update" parameterType="com.accountbook.mvc.dao.Board">
+	<update id="update" parameterType="com.accountbook.mvc.domain.Board">
 		UPDATE T_BOARD
 		SET TITLE = #{title}
 			,CONTENTS = #{contents}
 		WHERE BOARD_SEQ = #{boardSeq}	
 	</update>
 	
-	<delete id="delete" parameterType="com.accountbook.mvc.dao.Board">
+	<delete id="delete" parameterType="com.accountbook.mvc.domain.Board">
 		DELETE
 		FROM T_BOARD
 		WHERE BOARD_SEQ = #{boardSeq}	
 	</delete>
+	
+	<insert id="saveList" parameterType="map">
+		INSERT INTO T_BOARD
+		(
+			TITLE
+			,CONTENTS
+			,REG_DATE 
+		)
+		VALUES
+		<foreach collection="boardList" item="board" separator=",">
+		(
+			#{board.title}
+			,#{board.contents}
+			,sysdate()	
+		)
+		</foreach>
+	</insert>
 	
 </mapper>
