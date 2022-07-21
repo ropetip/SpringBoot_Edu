@@ -7,8 +7,10 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.accountbook.framework.data.domain.PageRequestParameter;
 import com.accountbook.mvc.domain.Board;
 import com.accountbook.mvc.parameter.BoardParameter;
+import com.accountbook.mvc.parameter.BoardSearchParameter;
 import com.accountbook.mvc.repository.BoardRepository;
 
 @Service
@@ -17,8 +19,8 @@ public class BoardService {
 	@Autowired
 	private BoardRepository repository;
 	
-	public List<Board> getList() {
-		return repository.getList();	
+	public List<Board> getList(PageRequestParameter<BoardSearchParameter> pageRequestParam) {
+		return repository.getList(pageRequestParam);	
 	}
 	
 	public Board get(int boardSeq) {

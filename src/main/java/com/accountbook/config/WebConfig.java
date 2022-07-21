@@ -1,16 +1,19 @@
 package com.accountbook.config;
 
+import java.util.List;
 import java.util.Locale;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.http.MediaType;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import com.accountbook.config.servlet.handler.BaseHandlerInterCeptor;
+import com.accountbook.framework.data.web.MySQLPageRequestHandleMethodArgumentResolver;
 import com.accountbook.mvc.domain.BaseCodeLabelEnum;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -53,5 +56,11 @@ public class WebConfig implements WebMvcConfigurer{
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(baseHandlerInterCeptor());
+	}
+	
+	@Override
+	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+		// 페이지 리졸버 등록
+		resolvers.add(new MySQLPageRequestHandleMethodArgumentResolver());
 	}
 }

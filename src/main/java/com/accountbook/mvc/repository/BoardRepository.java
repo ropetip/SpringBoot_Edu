@@ -5,8 +5,10 @@ import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
+import com.accountbook.framework.data.domain.PageRequestParameter;
 import com.accountbook.mvc.domain.Board;
 import com.accountbook.mvc.parameter.BoardParameter;
+import com.accountbook.mvc.parameter.BoardSearchParameter;
 
 /**
  * 게시판 Repository
@@ -16,7 +18,7 @@ import com.accountbook.mvc.parameter.BoardParameter;
 @Repository
 public interface BoardRepository {
 	
-	List<Board> getList();
+	List<Board> getList(PageRequestParameter<BoardSearchParameter> pageRequestParam);
 	
 	Board get(int boardSeq);
 	

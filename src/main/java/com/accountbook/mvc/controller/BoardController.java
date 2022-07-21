@@ -18,14 +18,18 @@ import org.springframework.web.bind.annotation.RestController;
 import com.accountbook.config.exception.BaseException;
 import com.accountbook.config.http.BaseResponse;
 import com.accountbook.config.http.BaseResponseCode;
+import com.accountbook.framework.data.domain.MySQLPageRequest;
+import com.accountbook.framework.data.domain.PageRequestParameter;
 import com.accountbook.mvc.domain.Board;
 import com.accountbook.mvc.parameter.BoardParameter;
+import com.accountbook.mvc.parameter.BoardSearchParameter;
 import com.accountbook.mvc.service.BoardService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 @RequestMapping("/board")
@@ -39,9 +43,10 @@ public class BoardController {
 	
 	@GetMapping("/list")
 	@ApiOperation(value="목록 조회", notes=" 게시물 목록 정보를 조회할 수 있습니다.")	
-	public BaseResponse<List<Board>> getList() {
-		logger.info(this.getClass().getName()+".getList");
-		return new BaseResponse<List<Board>>(boardService.getList());
+	public BaseResponse<List<Board>> getList(@ApiParam BoardSearchParameter parameter, @ApiParam MySQLPageRequest pageRequest) {
+		logger.info("pageRequest: {}", pageRequest);
+		PageRequestParameter<BoardSearchParameter> pageRequestParam = new PageRequestParameter<BoardSearchParameter>(pageRequest, parameter);
+		return new BaseResponse<List<Board>>(boardService.getList(pageRequestParam));
 	}
 	
 	@GetMapping("/{boardSeq}")
