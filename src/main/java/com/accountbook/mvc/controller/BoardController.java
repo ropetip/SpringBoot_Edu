@@ -20,6 +20,7 @@ import com.accountbook.config.http.BaseResponse;
 import com.accountbook.config.http.BaseResponseCode;
 import com.accountbook.framework.data.domain.MySQLPageRequest;
 import com.accountbook.framework.data.domain.PageRequestParameter;
+import com.accountbook.framework.web.bind.annotation.RequestConfig;
 import com.accountbook.mvc.domain.Board;
 import com.accountbook.mvc.parameter.BoardParameter;
 import com.accountbook.mvc.parameter.BoardSearchParameter;
@@ -64,6 +65,7 @@ public class BoardController {
 	}
 	
 	@PutMapping
+	@RequestConfig
 	@ApiOperation(value="등록/수정 처리", notes=" 신규 게시물 저장 및 기존 게시물 업데이트가 가능합니다.")	
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "title", value="제목", example = "spring"),
@@ -91,6 +93,7 @@ public class BoardController {
 	}
 	
 	@DeleteMapping("/{boardSeq}")
+	@RequestConfig
 	@ApiOperation(value="삭제 처리", notes=" 게시물 번호에 해당하는 정보를 삭제합니다.")	
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "boardSeq", value="게시물 번호", example = "1"),
