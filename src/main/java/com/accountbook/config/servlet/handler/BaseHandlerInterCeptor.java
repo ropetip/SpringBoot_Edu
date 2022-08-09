@@ -23,13 +23,13 @@ public class BaseHandlerInterCeptor implements HandlerInterceptor {
 		if(handler instanceof HandlerMethod) {
 			HandlerMethod handlerMethod = (HandlerMethod) handler;
 			logger.info("handlerMethod : {}", handlerMethod);
-			RequestConfig requestConfig = handlerMethod.getMethodAnnotation(RequestConfig.class);
+			/*RequestConfig requestConfig = handlerMethod.getMethodAnnotation(RequestConfig.class);
 			if(requestConfig != null) {
 				// 로그인 체크가 필수인 경우
 				if(!requestConfig.loginCheck()) {
 					throw new BaseException(BaseResponseCode.LOGIN_REQUIRED);
 				}
-			}
+			}*/
 		}
 		return true;
 	}
