@@ -19,10 +19,11 @@ public class BaseHandlerInterCeptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-		logger.info("prehandle requestURI : {}", request.getRequestURI());;
+		//logger.info("prehandle requestURI : {}", request.getRequestURI());;
 		if(handler instanceof HandlerMethod) {
 			HandlerMethod handlerMethod = (HandlerMethod) handler;
 			logger.info("handlerMethod : {}", handlerMethod);
+			
 			/*RequestConfig requestConfig = handlerMethod.getMethodAnnotation(RequestConfig.class);
 			if(requestConfig != null) {
 				// 로그인 체크가 필수인 경우
@@ -30,6 +31,7 @@ public class BaseHandlerInterCeptor implements HandlerInterceptor {
 					throw new BaseException(BaseResponseCode.LOGIN_REQUIRED);
 				}
 			}*/
+			
 		}
 		return true;
 	}
@@ -37,6 +39,6 @@ public class BaseHandlerInterCeptor implements HandlerInterceptor {
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
-		logger.info("posthandle requestURI : {}", request.getRequestURI());;
+		//logger.info("posthandle requestURI : {}", request.getRequestURI());;
 	}
 }

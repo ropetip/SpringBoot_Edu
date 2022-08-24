@@ -18,7 +18,7 @@ public class AccountbookScheduler {
 	@Autowired
 	GlobalConfig globalConfig;
 	
-	@Scheduled(cron ="#{@schedulerCron}")
+	//@Scheduled(cron ="#{@schedulerCron}")
 	public void shcedule1() {
 		logger.info("schedule1 동작하고 있음: {}", Calendar.getInstance().getTime());
 	}

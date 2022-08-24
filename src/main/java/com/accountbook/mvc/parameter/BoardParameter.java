@@ -10,6 +10,7 @@ public class BoardParameter {
 	private BoardType boardType;
 	private String title;
 	private String contents;
+	private Boolean delYn;
 	
 	public BoardParameter() {
 		
