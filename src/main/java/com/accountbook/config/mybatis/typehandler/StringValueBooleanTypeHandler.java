@@ -12,8 +12,8 @@ import org.apache.ibatis.type.TypeHandler;
 public class StringValueBooleanTypeHandler implements TypeHandler<Boolean> {
 
 	@Override
-	public void setParameter(PreparedStatement ps, int i, Boolean parameter, JdbcType jdbcType) throws SQLException {
-		ps.setString(i, BooleanUtils.toString(parameter, "Y", "N"));
+	public void setParameter(PreparedStatement ps, int i, Boolean parameter, JdbcType jdbcType) throws SQLException {		
+		ps.setString(i, BooleanUtils.toString(parameter==null? false: parameter, "Y", "N"));
 	}
 
 	@Override

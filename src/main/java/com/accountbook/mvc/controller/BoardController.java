@@ -7,13 +7,16 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.accountbook.config.exception.BaseException;
 import com.accountbook.config.http.BaseResponse;
@@ -32,7 +35,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@RestController
+@Controller
 @RequestMapping("/board")
 @Api(tags = "게시판API")
 public class BoardController {
@@ -43,6 +46,7 @@ public class BoardController {
 	private BoardService boardService;
 	
 	@GetMapping("/list")
+	@ResponseBody
 	@ApiOperation(value="목록 조회", notes=" 게시물 목록 정보를 조회할 수 있습니다.")	
 	public BaseResponse<List<Board>> getList(@ApiParam BoardSearchParameter parameter, @ApiParam MySQLPageRequest pageRequest) {
 		logger.info("pageRequest: {}", pageRequest);
@@ -51,7 +55,8 @@ public class BoardController {
 	}
 	
 	@GetMapping("/{boardSeq}")
-	@ApiOperation(value="상세 조회", notes=" 게시물 번호에 해당하는 상세정보를 조회할 수 있습니다.")	
+	@ResponseBody
+	@ApiOperation(value="상세 조회", notes=" 게시물 번호에 해당하는 상세정보를 조회할 수 있습니다.")
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "boardSeq", value="게시물 번호", example = "1")
 	})
@@ -64,8 +69,24 @@ public class BoardController {
 		return new BaseResponse<Board>(boardService.get(boardSeq));
 	}
 	
-	@PutMapping
-	@RequestConfig
+	/**
+	 * 등록/수정 화면
+	 * @param param
+	 * @return
+	 */
+	@GetMapping("/form")
+	@RequestConfig(loginCheck = false)
+	public void form(BoardParameter param, Model model) {
+		if(param.getBoardSeq() > 0) {
+			Board board = boardService.get(param.getBoardSeq());
+			model.addAttribute("board", board);
+		}
+		model.addAttribute("param", param);
+	}
+	
+	@PostMapping("/save")
+	@RequestConfig(loginCheck = false)
+	@ResponseBody
 	@ApiOperation(value="등록/수정 처리", notes=" 신규 게시물 저장 및 기존 게시물 업데이트가 가능합니다.")	
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "title", value="제목", example = "spring"),
@@ -94,6 +115,7 @@ public class BoardController {
 	
 	@DeleteMapping("/{boardSeq}")
 	@RequestConfig
+	@ResponseBody
 	@ApiOperation(value="삭제 처리", notes=" 게시물 번호에 해당하는 정보를 삭제합니다.")	
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "boardSeq", value="게시물 번호", example = "1"),
@@ -108,6 +130,7 @@ public class BoardController {
 	}
 	
 	@PutMapping("/saveList1")
+	@ResponseBody
 	@ApiOperation(value="대용량 등록처리1", notes="대용량 등록처리1")	
 	public BaseResponse<Boolean> saveList1() {
 		int count = 0;
@@ -131,6 +154,7 @@ public class BoardController {
 	}
 	
 	@PutMapping("/saveList2")
+	@ResponseBody
 	@ApiOperation(value="대용량 등록처리2", notes="대용량 등록처리2")		
 	public BaseResponse<Boolean> saveList2() {
 		int count = 0;
