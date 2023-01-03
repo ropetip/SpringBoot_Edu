@@ -24,6 +24,7 @@ $(function() {
 			,success: function(data) {
 				if(data.code == "SUCCESS") {
 					alert("저장하였습니다.");
+					location.href = "/board/list";
 				} else {
 					alert(data.message);
 				}
@@ -36,6 +37,7 @@ $(function() {
 <body>
 	<div class="container">
 		<form id="form">
+			<input type="hidden" name="boardSeq" value="${board == null ? 0 : board.boardSeq}"/>
 			<input type="hidden" name="boardType" value="COMMUNITY"/>
 		    <div class="row mb-3">
 		        <label for="title" class="col-sm-2 col-form-label"><spring:message code="board.title"/></label>
@@ -50,7 +52,7 @@ $(function() {
 			    </div>
 			</div>
 			<button type="submit" class="btn btn-primary"><spring:message code="button.save"/></button>
-	    </div>
-	</form>
+		</form>
+    </div>
 </body>
 </html>

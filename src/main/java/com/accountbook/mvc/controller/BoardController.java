@@ -25,6 +25,7 @@ import com.accountbook.framework.data.domain.MySQLPageRequest;
 import com.accountbook.framework.data.domain.PageRequestParameter;
 import com.accountbook.framework.web.bind.annotation.RequestConfig;
 import com.accountbook.mvc.domain.Board;
+import com.accountbook.mvc.domain.MenuType;
 import com.accountbook.mvc.parameter.BoardParameter;
 import com.accountbook.mvc.parameter.BoardSearchParameter;
 import com.accountbook.mvc.service.BoardService;
@@ -33,10 +34,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 
 @Controller
-@RequestMapping("/board")
 @Api(tags = "게시판API")
 public class BoardController {
 	
@@ -46,52 +45,67 @@ public class BoardController {
 	private BoardService boardService;
 	
 	@GetMapping("/list")
-	@ResponseBody
-	@ApiOperation(value="목록 조회", notes=" 게시물 목록 정보를 조회할 수 있습니다.")	
-	public BaseResponse<List<Board>> getList(@ApiParam BoardSearchParameter parameter, @ApiParam MySQLPageRequest pageRequest) {
+	public String list(BoardSearchParameter param, MySQLPageRequest pageRequest, Model model) {
 		logger.info("pageRequest: {}", pageRequest);
-		PageRequestParameter<BoardSearchParameter> pageRequestParam = new PageRequestParameter<BoardSearchParameter>(pageRequest, parameter);
-		return new BaseResponse<List<Board>>(boardService.getList(pageRequestParam));
+		PageRequestParameter<BoardSearchParameter> pageRequestParam = new PageRequestParameter<BoardSearchParameter>(pageRequest, param);
+		List<Board> boardList = boardService.getList(pageRequestParam);
+		model.addAttribute("boardList", boardList);
+		return "board/list";
 	}
 	
-	@GetMapping("/{boardSeq}")
-	@ResponseBody
-	@ApiOperation(value="상세 조회", notes=" 게시물 번호에 해당하는 상세정보를 조회할 수 있습니다.")
-	@ApiImplicitParams({
-		@ApiImplicitParam(name = "boardSeq", value="게시물 번호", example = "1")
-	})
-	public BaseResponse<Board> get(@PathVariable int boardSeq) {
+	@GetMapping("{menuType}")
+	public String list(@PathVariable MenuType menuType , BoardSearchParameter param, MySQLPageRequest pageRequest, Model model) {
+		logger.info("menuType: {}", menuType);
+		logger.info("pageRequest: {}", pageRequest);
+		PageRequestParameter<BoardSearchParameter> pageRequestParam = new PageRequestParameter<BoardSearchParameter>(pageRequest, param);
+		List<Board> boardList = boardService.getList(pageRequestParam);
+		model.addAttribute("boardList", boardList);
+		return "board/list";
+	}
+	
+	@GetMapping("/form")
+	public void form(Model model) {
+		
+	}
+	
+	/**
+	 * 상세페이지
+	 * @param boardSeq
+	 * @return
+	 */
+	@GetMapping("/detail/{boardSeq}")
+	public String detail(@PathVariable int boardSeq, Model model) {
 		Board board = boardService.get(boardSeq);
 		// null 처리
 		if(board == null) {
 			throw new BaseException(BaseResponseCode.DATA_IS_NULL, new String[] { "게시물"} );
 		}
-		return new BaseResponse<Board>(boardService.get(boardSeq));
+		model.addAttribute("board", board);
+		return "/board/detail";
 	}
 	
 	/**
-	 * 등록/수정 화면
+	 * 수정 화면
 	 * @param param
 	 * @return
 	 */
-	@GetMapping("/form")
+	@GetMapping("/edit/{boardSeq}")
 	@RequestConfig(loginCheck = false)
-	public void form(BoardParameter param, Model model) {
-		if(param.getBoardSeq() > 0) {
-			Board board = boardService.get(param.getBoardSeq());
-			model.addAttribute("board", board);
+	public String edit(@PathVariable(required = true) int boardSeq, BoardParameter param, Model model) {
+		Board board = boardService.get(param.getBoardSeq());
+		// null 처리
+		if(board == null) {
+			throw new BaseException(BaseResponseCode.DATA_IS_NULL, new String[] { "게시물"} );
 		}
+		model.addAttribute("board", board);
 		model.addAttribute("param", param);
+		
+		return "/board/form";
 	}
 	
 	@PostMapping("/save")
 	@RequestConfig(loginCheck = false)
 	@ResponseBody
-	@ApiOperation(value="등록/수정 처리", notes=" 신규 게시물 저장 및 기존 게시물 업데이트가 가능합니다.")	
-	@ApiImplicitParams({
-		@ApiImplicitParam(name = "title", value="제목", example = "spring"),
-		@ApiImplicitParam(name = "contents", value="내용", example = "spring 강좌"),
-	})
 	public BaseResponse<Integer> save(BoardParameter param) {
 		int boardSeq = param.getBoardSeq();
 		// 제목 필수 체크

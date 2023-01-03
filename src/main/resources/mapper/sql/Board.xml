@@ -30,7 +30,7 @@
 		 	</if>
 		 </where>
 		  ORDER BY B.REG_DATE DESC
-		  LIMIT #{pageRequest.limit}, #{pageRequest.offset}
+		  <!-- LIMIT #{pageRequest.limit}, #{pageRequest.offset} -->
 	</select>
 	
 	<select id="get" parameterType="com.accountbook.mvc.domain.Board" resultType="com.accountbook.mvc.domain.Board">

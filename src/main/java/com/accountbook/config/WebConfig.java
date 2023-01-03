@@ -3,7 +3,7 @@ package com.accountbook.config;
 import java.util.List;
 import java.util.Locale;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
@@ -84,5 +84,12 @@ public class WebConfig implements WebMvcConfigurer{
 			// 리눅스 또는 윈도우 환경
 			registry.addResourceHandler(resourcePattern).addResourceLocations("file:" + config.getUploadFilePath());
 		}
+	}
+	
+	@Bean
+	public FilterRegistrationBean<SitemeshConfig> sitemeshBean() {
+		FilterRegistrationBean<SitemeshConfig> filter = new FilterRegistrationBean<SitemeshConfig>();
+		filter.setFilter(new SitemeshConfig());
+		return filter;
 	}
 }
