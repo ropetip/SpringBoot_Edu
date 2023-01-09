@@ -20,6 +20,9 @@
 		 	<if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(parameter.keyword)">
 		 	AND B.TITLE LIKE CONCAT('%', #{parameter.keyword}, '%')
 		 	</if>
+		 	<if test="@org.apache.commons.lang3.ObjectUtils@isNotEmpty(parameter.boardType)">
+		 	AND B.BOARD_TYPE = #{parameter.boardType}
+		 	</if>
 		 	<!-- 게시판 종류 배열 검색 -->
 		 	<if test="@org.apache.commons.lang3.ObjectUtils@isNotEmpty(parameter.boardTypes)">
 		 	AND B.BOARD_TYPE IN (

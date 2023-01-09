@@ -57,15 +57,19 @@ public class BoardController {
 	public String list(@PathVariable MenuType menuType , BoardSearchParameter param, MySQLPageRequest pageRequest, Model model) {
 		logger.info("menuType: {}", menuType);
 		logger.info("pageRequest: {}", pageRequest);
+		param.setBoardType(menuType.getBoardType());
 		PageRequestParameter<BoardSearchParameter> pageRequestParam = new PageRequestParameter<BoardSearchParameter>(pageRequest, param);
 		List<Board> boardList = boardService.getList(pageRequestParam);
 		model.addAttribute("boardList", boardList);
+		model.addAttribute("menuType", menuType);
 		return "board/list";
 	}
 	
-	@GetMapping("/form")
-	public void form(Model model) {
+	@GetMapping("/{menuType}/form")
+	public String form(@PathVariable MenuType menuType, BoardParameter param, Model model) {
+		model.addAttribute("menuType", menuType);
 		
+		return "/board/form";
 	}
 	
 	/**
@@ -73,14 +77,16 @@ public class BoardController {
 	 * @param boardSeq
 	 * @return
 	 */
-	@GetMapping("/detail/{boardSeq}")
-	public String detail(@PathVariable int boardSeq, Model model) {
+	@GetMapping("/{menuType}/{boardSeq}")
+	public String detail(@PathVariable MenuType menuType, @PathVariable int boardSeq, Model model) {
 		Board board = boardService.get(boardSeq);
 		// null 처리
 		if(board == null) {
 			throw new BaseException(BaseResponseCode.DATA_IS_NULL, new String[] { "게시물"} );
 		}
 		model.addAttribute("board", board);
+		model.addAttribute("menuType", menuType);
+		
 		return "/board/detail";
 	}
 	
@@ -89,9 +95,9 @@ public class BoardController {
 	 * @param param
 	 * @return
 	 */
-	@GetMapping("/edit/{boardSeq}")
+	@GetMapping("/{menuType}/edit/{boardSeq}")
 	@RequestConfig(loginCheck = false)
-	public String edit(@PathVariable(required = true) int boardSeq, BoardParameter param, Model model) {
+	public String edit(@PathVariable MenuType menuType, @PathVariable(required = true) int boardSeq, BoardParameter param, Model model) {
 		Board board = boardService.get(param.getBoardSeq());
 		// null 처리
 		if(board == null) {
@@ -99,14 +105,15 @@ public class BoardController {
 		}
 		model.addAttribute("board", board);
 		model.addAttribute("param", param);
+		model.addAttribute("menuType", menuType);
 		
 		return "/board/form";
 	}
 	
-	@PostMapping("/save")
+	@PostMapping("/{menuType}/save")
 	@RequestConfig(loginCheck = false)
 	@ResponseBody
-	public BaseResponse<Integer> save(BoardParameter param) {
+	public BaseResponse<Integer> save(@PathVariable MenuType menuType, BoardParameter param) {
 		int boardSeq = param.getBoardSeq();
 		// 제목 필수 체크
 		if(StringUtils.isEmpty(param.getTitle()) ) {
@@ -116,13 +123,8 @@ public class BoardController {
 		if(StringUtils.isEmpty(param.getContents()) ) {
 			throw new BaseException(BaseResponseCode.VALIDATE_REQUIRED, new String[] { "contents", "내용" } );
 		}
-		// boardSeq가 있는 경우 체크
-		if(boardSeq != 0) {
-			Board board =boardService.get(boardSeq);
-			if(board == null) {
-				throw new BaseException(BaseResponseCode.DATA_IS_NULL, new String[] { "boardSeq"} );
-			}
-		}
+		param.setBoardType(menuType.getBoardType());
+		
 		boardService.save(param);
 		return new BaseResponse<Integer>(param.getBoardSeq()); 
 	}

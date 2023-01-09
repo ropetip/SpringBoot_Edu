@@ -10,6 +10,8 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.6.1.js"></script>
 <sitemesh:write property="head"/>
 </head>
 <body>
@@ -42,8 +44,7 @@
 	</nav>
 
 	<h2>총갯수: ${totalCount}</h2>
-	<form id="form" method="get" action="/board/list">
-		<input type="hidden" name="boardType" value="COMMUNITY" />
+	<form id="form" method="get" action="/list">
 		<div class="row mb-3">
 			<label for="title" class="col-sm-2 col-form-label"><spring:message
 					code="search.keyword" /></label>
@@ -59,7 +60,7 @@
 	</form>
 
 	<div class="d-grid gap-2 d-md-flex justify-content-md-end mt-2">
-		<a href="/board/form" class="btn btn-primary me-md-2" type="button"><spring:message
+		<a href="/${menuType}/form" class="btn btn-primary me-md-2" type="button"><spring:message
 				code="button.form" /></a>
 	</div>
 
@@ -77,7 +78,7 @@
 			<c:forEach var="board" items="${boardList}" varStatus="status">
 				<tr>
 					<th scope="row">${status.count}</th>
-					<td><a href="/board/detail/${board.boardSeq}" />${board.title}</td>
+					<td><a href="/${menuType}/${board.boardSeq}" />${board.title}</td>
 					<td>${board.viewCount}</td>
 					<td><fmt:formatDate value="${board.regDate}"
 							pattern="yyyy.MM.dd HH:mm:ss" /></td>
@@ -90,5 +91,6 @@
 		</tbody>
 	</table>
 	<sitemesh:write property="body"/>
+	
 </body>
 </html>

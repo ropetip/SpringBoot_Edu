@@ -13,6 +13,14 @@ public enum MenuType{
 	
 	private BoardType boardType;
 	
+	public BoardType getBoardType() {
+		return boardType;
+	}
+
+	public void setBoardType(BoardType boardType) {
+		this.boardType = boardType;
+	}
+
 	MenuType(BoardType boardType) {
 		this.boardType = boardType;
 	}
